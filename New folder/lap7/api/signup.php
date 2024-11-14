@@ -1,5 +1,5 @@
 <?php
-require 'db.php';
+require '../db.php';
 
 if (isset($_POST['signup'])) {
     $username = $_POST['username'];
@@ -13,16 +13,18 @@ if (isset($_POST['signup'])) {
     if ($result->num_rows > 0) {
         $sql = "INSERT INTO users (username, password) VALUES (?, ?)"; // สร้าง prepared statement
             $stmt = $conn->prepare($sql);
-            $stmt->bind_param("ss", $username, $password); // ผูกข้อมูลกับ statement
+            $stmt->bind_param('ss', $username, $password); // ผูกข้อมูลกับ statement
             $stmt->execute();
+            http_response_code(201);
             echo 'Success';
         }
         else {
+            http_response_code(400);
             echo 'std ID not found.';
         }
     }
-    catch (Exception $e) {
-        echo $e->getMessage();
+    catch (Exception) {
+        http_response_code(500);
+        echo 'Server error.';
     }
 }
-?>
